@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#8e2743" />
+<title>Een dag in Lille · Wandelroute voor z'n tweeën</title>
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root{
+  --rose:#d98ea0;
+  --rose-soft:#f2dfe3;
+  --wine:#8e2743;
+  --wine-deep:#5d1a2c;
+  --cream:#fbf8f6;
+  --sand:#efe6e0;
+  --ink:#332a2d;
+  --ink-soft:#786c70;
+  --radius:18px;
+  --radius-sm:13px;
+  --shadow:0 6px 22px rgba(93,26,44,.09);
+  --shadow-lg:0 14px 38px rgba(93,26,44,.16);
+  --ease:cubic-bezier(.25,.8,.25,1);
+  --nav-h:66px;
+}
+
+/* ============================================================
+   BASIS
+   ============================================================ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
+  background:var(--cream);color:var(--ink);line-height:1.55;min-height:100vh;overflow-x:hidden;
+}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:600;line-height:1.2}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.app{max-width:520px;margin:0 auto;padding-bottom:calc(var(--nav-h) + 28px);position:relative}
+
+/* ============================================================
+   1. WELKOMSTSCHERM
+   ============================================================ */
+#welcome{
+  position:fixed;inset:0;z-index:100;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:32px 26px;
+  background:
+    radial-gradient(circle at 25% 18%,rgba(217,142,160,.42),transparent 58%),
+    linear-gradient(165deg,var(--wine-deep),var(--wine) 60%,#a02f4e 100%);
+  color:#fff;transition:opacity .6s var(--ease),transform .6s var(--ease);
+}
+#welcome.hidden{opacity:0;transform:scale(1.04);pointer-events:none}
+.welcome-badge{
+  font-size:11.5px;letter-spacing:3px;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:7px 16px;margin-bottom:26px;opacity:.85;
+}
+#welcome h1{font-size:clamp(34px,10.5vw,50px);margin-bottom:8px}
+.welcome-sub{font-size:17px;opacity:.9;margin-bottom:4px}
+.welcome-date{font-size:13.5px;opacity:.65;margin-bottom:28px}
+.welcome-card{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:var(--radius);
+  padding:18px 20px;margin-bottom:30px;font-size:14px;max-width:340px;text-align:left;
+}
+.welcome-card strong{display:block;font-size:14.5px;margin-bottom:6px}
+.btn-primary{
+  background:#fff;color:var(--wine);padding:15px 40px;border-radius:999px;
+  font-size:15.5px;font-weight:700;box-shadow:var(--shadow-lg);transition:transform .25s var(--ease);
+}
+.btn-primary:active{transform:scale(.96)}
+.welcome-foot{margin-top:20px;font-size:11.5px;opacity:.6}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+header{
+  position:sticky;top:0;z-index:40;
+  background:linear-gradient(135deg,var(--wine),#a02f4e);color:#fff;
+  padding:15px 20px 17px;border-radius:0 0 20px 20px;box-shadow:var(--shadow);
+}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+header h2{font-size:20px}
+header .sub{font-size:11.5px;opacity:.75;letter-spacing:1.2px;text-transform:uppercase}
+.header-chip{
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);
+  border-radius:999px;padding:7px 13px;font-size:12px;font-weight:600;white-space:nowrap;
+}
+
+/* ============================================================
+   VIEWS & KAARTEN
+   ============================================================ */
+.view{display:none;padding:18px 16px 8px;animation:fade .4s var(--ease)}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.section-title{
+  font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:var(--wine);
+  margin:22px 4px 12px;display:flex;align-items:center;gap:8px;
+}
+.section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--rose-soft),transparent)}
+.card{
+  background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:18px;margin-bottom:14px;border:1px solid rgba(142,39,67,.06);
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.muted{color:var(--ink-soft);font-size:14px}
+
+/* ============================================================
+   3. VOORTGANG
+   ============================================================ */
+.progress-card{background:linear-gradient(135deg,#fff,var(--sand))}
+.progress-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.progress-count{font-size:13px;color:var(--wine);font-weight:700}
+.bar{height:10px;background:var(--rose-soft);border-radius:999px;overflow:hidden}
+.bar-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--rose),var(--wine));transition:width .7s var(--ease)}
+.dots{display:flex;justify-content:space-between;margin-top:12px;gap:4px}
+.dot{flex:1;height:6px;border-radius:999px;background:var(--rose-soft);transition:background .4s var(--ease)}
+.dot.done{background:var(--wine)}
+.progress-note{margin-top:10px;font-size:13px;color:var(--ink-soft)}
+
+/* ============================================================
+   2. STOPS
+   ============================================================ */
+.stop.done{background:linear-gradient(135deg,#fff,#f5faf6);border-color:rgba(63,138,82,.22)}
+.stop-head{display:flex;gap:13px;align-items:flex-start;cursor:pointer}
+.stop-num{
+  flex:0 0 44px;height:44px;border-radius:14px;
+  background:linear-gradient(135deg,var(--rose),var(--wine));color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  box-shadow:0 4px 12px rgba(142,39,67,.25);
+}
+.stop.done .stop-num{background:linear-gradient(135deg,#7fc08c,#3f8a52)}
+.stop-title{font-size:16.5px;margin-bottom:2px}
+.stop-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.tag{font-size:11px;padding:4px 9px;border-radius:999px;background:var(--sand);color:var(--wine);font-weight:600}
+.tag.time{background:var(--rose-soft)}
+.chevron{margin-left:auto;color:var(--rose);font-size:12px;transition:transform .35s var(--ease);padding-top:6px}
+.stop.open .chevron{transform:rotate(180deg)}
+.stop-body{max-height:0;overflow:hidden;transition:max-height .45s var(--ease)}
+.stop.open .stop-body{max-height:1600px}
+.stop-body-inner{padding-top:14px;border-top:1px dashed var(--sand);margin-top:14px}
+.stop-body p{font-size:14px;margin-bottom:12px;text-align:justify;hyphens:auto}
+.facts{list-style:none;margin-bottom:12px;background:var(--cream);border-radius:11px;padding:11px 13px}
+.facts li{font-size:12.5px;color:var(--ink-soft);padding:4px 0;line-height:1.45}
+.facts li + li{border-top:1px dashed var(--sand)}
+.tip{
+  background:linear-gradient(135deg,var(--rose-soft),#fdf4f6);border-left:3px solid var(--rose);
+  border-radius:0 11px 11px 0;padding:11px 13px;font-size:13.5px;margin-bottom:12px;
+}
+.tip b{color:var(--wine-deep)}
+.btn-row{display:flex;gap:8px}
+.btn-done{
+  flex:1;padding:12px;border-radius:11px;font-weight:700;font-size:14px;
+  background:var(--wine);color:#fff;transition:background .3s var(--ease),transform .2s var(--ease);
+}
+.btn-done:active{transform:scale(.97)}
+.stop.done .btn-done{background:#3f8a52}
+.btn-map{
+  flex:0 0 46px;border-radius:11px;background:var(--sand);color:var(--wine);font-size:17px;
+  transition:transform .2s var(--ease);
+}
+.btn-map:active{transform:scale(.93)}
+
+/* ============================================================
+   4. INTERACTIEVE KAART
+   ============================================================ */
+.map-wrap{position:relative;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(142,39,67,.10);background:#fff}
+.map{position:relative;height:360px;overflow:hidden;cursor:grab;touch-action:none;background:#f4efe9;user-select:none}
+.map.dragging{cursor:grabbing}
+#tileLayer{position:absolute;inset:0;opacity:.9}
+#tileLayer img{position:absolute;width:256px;height:256px;-webkit-user-drag:none}
+#mapSvg{position:absolute;inset:0;width:100%;height:100%}
+#pinLayer{position:absolute;inset:0}
+
+/* Spelden */
+.pin{
+  position:absolute;transform:translate(-50%,-100%);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;
+  font-size:10px;font-weight:700;color:var(--wine-deep);transition:transform .2s var(--ease);
+}
+.pin:hover{transform:translate(-50%,-100%) scale(1.09)}
+.pin .bub{
+  width:28px;height:28px;border-radius:50% 50% 50% 8%;background:var(--wine);color:#fff;
+  display:flex;align-items:center;justify-content:center;transform:rotate(45deg);
+  box-shadow:0 4px 10px rgba(0,0,0,.3);margin-bottom:6px;border:2px solid #fff;
+}
+.pin .bub i{transform:rotate(-45deg);font-style:normal;font-size:12px}
+.pin.done .bub{background:#3f8a52}
+.pin.active .bub{background:var(--rose);box-shadow:0 0 0 4px rgba(217,142,160,.45),0 4px 10px rgba(0,0,0,.3)}
+.pin small{background:rgba(255,255,255,.92);border-radius:6px;padding:1px 5px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.14)}
+
+/* Bediening */
+.map-ctrl{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:6}
+.map-ctrl button{
+  width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.96);color:var(--wine);
+  font-size:18px;font-weight:700;box-shadow:0 3px 10px rgba(0,0,0,.16);
+  display:flex;align-items:center;justify-content:center;transition:transform .15s var(--ease);
+}
+.map-ctrl button:active{transform:scale(.9)}
+.map-ctrl button:disabled{opacity:.4;cursor:default}
+.map-ctrl button.sm{font-size:14px}
+.map-badge{
+  position:absolute;left:10px;top:10px;z-index:6;background:rgba(255,255,255,.92);
+  border-radius:999px;padding:5px 11px;font-size:11px;font-weight:700;color:var(--wine);
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+.map-attr{position:absolute;right:0;bottom:0;z-index:6;background:rgba(255,255,255,.75);font-size:9px;padding:2px 6px;color:#666;border-radius:6px 0 0 0}
+.map-attr a{color:#666}
+.map-info{background:#fff;border-top:1px solid var(--sand);padding:14px 16px;display:flex;gap:12px;align-items:flex-start;min-height:78px}
+.map-info .ico{font-size:26px;line-height:1.2}
+.map-info h4{font-family:Georgia,serif;font-size:15.5px;margin-bottom:2px}
+.map-info p{font-size:12.5px;color:var(--ink-soft);margin-bottom:7px}
+.map-info a{font-size:12px;font-weight:700;color:var(--wine);text-decoration:none;border:1px solid var(--rose-soft);border-radius:999px;padding:4px 10px;display:inline-block}
+.map-note{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:9px}
+
+/* Legenda */
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--ink-soft);margin-top:10px;justify-content:center}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:13px;height:13px;border-radius:4px;display:inline-block}
+
+/* ============================================================
+   5. MOMENTEN
+   ============================================================ */
+.surprise{background:linear-gradient(135deg,var(--wine),#a02f4e);color:#fff;text-align:center;padding:24px 20px}
+.surprise h3{font-size:19px;margin-bottom:6px}
+.surprise p.lead{font-size:13.5px;opacity:.82;margin-bottom:18px}
+#surpriseBox{
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:var(--radius-sm);
+  padding:22px 18px;min-height:104px;display:flex;align-items:center;justify-content:center;
+  font-size:15.5px;line-height:1.5;transition:opacity .3s var(--ease);
+}
+#surpriseBox.flip{opacity:0}
+.btn-light{margin-top:16px;background:#fff;color:var(--wine);padding:12px 28px;border-radius:999px;font-weight:700;font-size:14px;transition:transform .2s var(--ease)}
+.btn-light:active{transform:scale(.96)}
+.surprise-counter{margin-top:12px;font-size:11.5px;opacity:.7}
+
+/* ============================================================
+   6. FOTO'S
+   ============================================================ */
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.frame{
+  aspect-ratio:1/1;border-radius:var(--radius-sm);border:2px dashed var(--rose);
+  background:linear-gradient(135deg,#fff,var(--rose-soft));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:10px;gap:6px;cursor:pointer;transition:transform .3s var(--ease),background .3s var(--ease);
+}
+.frame:active{transform:scale(.96)}
+.frame.filled{border-style:solid;background:linear-gradient(135deg,var(--rose),var(--wine));color:#fff}
+.frame .icon{font-size:26px}
+.frame .lbl{font-size:11.5px;font-weight:600;line-height:1.3}
+
+/* ============================================================
+   7. WEER
+   ============================================================ */
+.weather{background:linear-gradient(135deg,#6fa8d0,#9fc9e2);color:#fff;box-shadow:0 10px 28px rgba(60,120,160,.25)}
+.weather-top{display:flex;align-items:center;gap:15px}
+.weather-icon{font-size:48px;line-height:1}
+.weather-temp{font-size:35px;font-family:Georgia,serif;line-height:1}
+.weather-desc{font-size:14px;opacity:.93}
+.weather-loc{font-size:11px;opacity:.75;letter-spacing:1.2px;text-transform:uppercase}
+.w-refresh{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.22);color:#fff;font-size:16px;flex:0 0 34px}
+.w-refresh.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.weather-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;
+  border-top:1px solid rgba(255,255,255,.26);padding-top:14px;text-align:center;font-size:11.5px;
+}
+.weather-grid div b{display:block;font-size:15px;margin-top:2px}
+.weather-advice{margin-top:14px;background:rgba(255,255,255,.18);border-radius:11px;padding:10px 12px;font-size:13px}
+.weather-status{margin-top:9px;font-size:10.5px;opacity:.8;text-align:right}
+
+/* ============================================================
+   8. SAMENVATTING
+   ============================================================ */
+.summary-hero{text-align:center;padding:26px 20px;background:linear-gradient(160deg,var(--wine-deep),var(--wine));color:#fff}
+.summary-hero .big{font-size:42px;margin-bottom:6px}
+.summary-hero h3{font-size:22px;margin-bottom:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:14px}
+.stat{background:#fff;border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);border:1px solid rgba(142,39,67,.06)}
+.stat b{display:block;font-size:20px;color:var(--wine);font-family:Georgia,serif}
+.stat span{font-size:10.5px;color:var(--ink-soft)}
+.closing{text-align:center;color:var(--wine);font-family:Georgia,serif;font-size:14.5px;padding:16px 12px 6px;opacity:.85}
+.highlight-list{list-style:none}
+.highlight-list li{display:flex;gap:10px;align-items:flex-start;font-size:14px;padding:10px 0;border-bottom:1px dashed var(--sand)}
+.highlight-list li:last-child{border-bottom:none}
+textarea{
+  width:100%;min-height:94px;border:1px solid var(--sand);border-radius:11px;padding:12px;
+  font-family:inherit;font-size:14px;resize:vertical;background:var(--cream);color:var(--ink);
+}
+textarea:focus{outline:2px solid var(--rose);outline-offset:1px}
+.rating{display:flex;gap:9px;justify-content:center;font-size:26px;margin:6px 0 4px}
+.rating span{cursor:pointer;filter:grayscale(1);opacity:.35;transition:all .25s var(--ease)}
+.rating span.on{filter:none;opacity:1;transform:scale(1.12)}
+
+/* ============================================================
+   NAVIGATIE
+   ============================================================ */
+nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;max-width:520px;margin:0 auto;height:var(--nav-h);
+  background:rgba(255,255,255,.94);border-top:1px solid var(--sand);
+  display:grid;grid-template-columns:repeat(5,1fr);box-shadow:0 -6px 18px rgba(93,26,44,.07);
+}
+nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;color:var(--ink-soft);font-weight:600}
+nav button i{font-style:normal;font-size:19px;transition:transform .25s var(--ease)}
+nav button.active{color:var(--wine)}
+nav button.active i{transform:translateY(-2px) scale(1.1)}
+#toast{
+  position:fixed;bottom:calc(var(--nav-h) + 16px);left:50%;transform:translate(-50%,24px);
+  background:var(--wine-deep);color:#fff;padding:11px 20px;border-radius:999px;font-size:13px;font-weight:600;
+  opacity:0;pointer-events:none;z-index:90;box-shadow:var(--shadow-lg);transition:all .35s var(--ease);
+}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:560px){.app{box-shadow:0 0 56px rgba(93,26,44,.09);min-height:100vh}.gallery{grid-template-columns:repeat(3,1fr)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. WELKOM ============ -->
+<section id="welcome">
+  <div class="welcome-badge">Lille · Frankrijk</div>
+  <h1>Een dag in Lille</h1>
+  <p class="welcome-sub">Een wandeling langs het mooiste van de stad, samen</p>
+  <p class="welcome-date" id="todayDate"></p>
+  <div class="welcome-card">
+    <strong>8 stops · ± 4,5 km · een hele dag samen</strong>
+    Van de Grand Place door Vieux-Lille naar de kathedraal, het Palais des Beaux-Arts
+    en de Citadelle. Met ruim tijd voor koffie, een lange lunch en een terras als de zon zakt.
+  </div>
+  <button class="btn-primary" onclick="startTour()">Start de route</button>
+  <p class="welcome-foot">Tik op een stop om die te openen · geen haast vandaag</p>
+</section>
+
+<div class="app">
+  <header>
+    <div class="header-row">
+      <div>
+        <h2 id="viewTitle">Route</h2>
+        <div class="sub">Lille · onze wandeling</div>
+      </div>
+      <div class="header-chip" id="headerChip">0 / 8 stops</div>
+    </div>
+  </header>
+
+  <!-- ============ ROUTE ============ -->
+  <section class="view active" id="view-tour">
+    <div class="card progress-card">
+      <div class="progress-top">
+        <strong>Voortgang vandaag</strong>
+        <span class="progress-count" id="progressCount">0%</span>
+      </div>
+      <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+      <div class="dots" id="dots"></div>
+      <p class="progress-note" id="progressNote">Nog niet begonnen — start met koffie op de Grand Place.</p>
+    </div>
+
+    <div class="section-title">De route</div>
+    <div id="stopsList"></div>
+
+    <!-- ============ 7. WEER ============ -->
+    <div class="section-title">Weer in Lille</div>
+    <div class="card weather">
+      <div class="weather-top">
+        <div class="weather-icon" id="wIcon">⛅</div>
+        <div style="flex:1">
+          <div class="weather-temp" id="wTemp">–</div>
+          <div class="weather-desc" id="wDesc">Weer wordt opgehaald…</div>
+          <div class="weather-loc">Lille · Hauts-de-France</div>
+        </div>
+        <button class="w-refresh" id="wRefresh" onclick="loadWeather(true)" title="Vernieuwen">⟳</button>
+      </div>
+      <div class="weather-grid">
+        <div>Ochtend<b id="wMorning">–</b></div>
+        <div>Middag<b id="wNoon">–</b></div>
+        <div>Avond<b id="wEve">–</b></div>
+        <div>Regen<b id="wRain">–</b></div>
+      </div>
+      <div class="weather-advice" id="wAdvice">Live gegevens worden geladen…</div>
+      <div class="weather-status" id="wStatus">Verbinden…</div>
+    </div>
+  </section>
+
+  <!-- ============ 4. KAART ============ -->
+  <section class="view" id="view-map">
+    <div class="section-title">Route op de kaart</div>
+    <div class="map-wrap">
+      <div class="map" id="mapBoard">
+        <div id="tileLayer"></div>
+        <svg id="mapSvg"></svg>
+        <div id="pinLayer"></div>
+        <div class="map-badge" id="mapBadge">z15</div>
+        <div class="map-ctrl">
+          <button id="btnIn"  onclick="zoomBy(1)"  title="Inzoomen">+</button>
+          <button id="btnOut" onclick="zoomBy(-1)" title="Uitzoomen">−</button>
+          <button class="sm" onclick="fitRoute()" title="Hele route">⤢</button>
+          <button class="sm" id="btnTiles" onclick="toggleTiles()" title="Kaartbeeld aan/uit">🛰️</button>
+        </div>
+        <div class="map-attr" id="mapAttr">eigen kaartlaag</div>
+      </div>
+      <div class="map-info" id="mapInfo"></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:#a9cddd"></i>Water (Deûle)</span>
+      <span><i style="background:#cfe3c4"></i>Parken</span>
+      <span><i style="background:#8e2743"></i>Onze route</span>
+    </div>
+    <p class="map-note">Getekend op echte coördinaten. Sleep om te verschuiven, + en − om te zoomen.</p>
+
+    <div class="card">
+      <h3 style="font-size:17px;margin-bottom:8px">Overzicht</h3>
+      <p class="muted">Afstand ± <b>4,5 km</b> · pure looptijd ± <b>75 min</b> · inclusief stops en pauzes: <b>een hele dag</b>.</p>
+      <div class="stop-meta" style="margin-top:12px">
+        <span class="tag">🚶 Vlak en makkelijk</span>
+        <span class="tag time">🕘 Start 09:30</span>
+        <span class="tag">🌆 Einde ± 19:30</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:17px;margin-bottom:8px">Praktisch</h3>
+      <ul class="highlight-list">
+        <li><span>🥐</span><span>Veel bakkers in Vieux-Lille sluiten rond 13:00 — ga 's ochtends.</span></li>
+        <li><span>🎨</span><span>Palais des Beaux-Arts is op dinsdag gesloten.</span></li>
+        <li><span>📚</span><span>Boekenmarkt in de Vieille Bourse: 's middags, meestal di t/m zo.</span></li>
+        <li><span>🚲</span><span>V'Lille-deelfietsen staan door de hele stad als het lopen te veel wordt.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 5. MOMENTEN ============ -->
+  <section class="view" id="view-surprise">
+    <div class="section-title">Momenten onderweg</div>
+    <div class="card surprise">
+      <h3>Kaartje trekken</h3>
+      <p class="lead">Een kleine opdracht of vraag voor jullie samen, wanneer het uitkomt.</p>
+      <div id="surpriseBox">Tik hieronder voor het eerste kaartje.</div>
+      <button class="btn-light" onclick="drawSurprise()">Trek een kaartje</button>
+      <div class="surprise-counter" id="surpriseCounter">0 kaartjes getrokken</div>
+    </div>
+    <div class="section-title">Per locatie</div>
+    <div class="card">
+      <ul class="highlight-list">
+        <li><span>☕</span><span><b>Grand Place:</b> raad elkaars bestelling voordat de ober komt.</span></li>
+        <li><span>📖</span><span><b>Vieille Bourse:</b> zoek een tweedehands boek uit voor de ander en schrijf er één zin in.</span></li>
+        <li><span>🕯️</span><span><b>Kathedraal:</b> ga even zitten, hand in hand, en kijk naar het licht door het marmer.</span></li>
+        <li><span>🌳</span><span><b>Citadelle:</b> één ronde over de wallen zonder telefoon — gewoon praten.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 6. FOTO'S ============ -->
+  <section class="view" id="view-photos">
+    <div class="section-title">Onze foto's</div>
+    <div class="card">
+      <p class="muted" style="margin-bottom:14px">Vink een kader af zodra je die foto hebt — een klein lijstje herinneringen voor later.</p>
+      <div class="gallery" id="gallery"></div>
+    </div>
+    <p class="map-note">Prototype: kaders zijn placeholders, nog geen upload.</p>
+  </section>
+
+  <!-- ============ 8. OVERZICHT ============ -->
+  <section class="view" id="view-summary">
+    <div class="card summary-hero">
+      <div class="big">🥂</div>
+      <h3>Onze dag in Lille</h3>
+      <p style="font-size:13.5px;opacity:.85" id="summaryLine">De dag moet nog beginnen.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="statStops">0</b><span>STOPS</span></div>
+      <div class="stat"><b id="statKm">0</b><span>KM</span></div>
+      <div class="stat"><b id="statPhotos">0</b><span>FOTO'S</span></div>
+    </div>
+    <div class="section-title">Bezochte stops</div>
+    <div class="card"><ul class="highlight-list" id="highlightList"></ul></div>
+    <div class="section-title">Hoe was onze dag?</div>
+    <div class="card">
+      <div class="rating" id="rating">
+        <span data-v="1">❤️</span><span data-v="2">❤️</span><span data-v="3">❤️</span>
+        <span data-v="4">❤️</span><span data-v="5">❤️</span>
+      </div>
+      <p class="muted" style="text-align:center" id="ratingLabel">Tik op de hartjes</p>
+    </div>
+    <div class="section-title">Mooiste moment van de dag</div>
+    <div class="card">
+      <textarea id="favMoment" placeholder="Welk moment van vandaag wil je onthouden?"></textarea>
+      <button class="btn-done" style="margin-top:10px;width:100%" onclick="saveMoment()">Bewaren</button>
+    </div>
+    <p class="closing">Lille was het decor. De dag ging over ons.</p>
+  </section>
+
+  <nav>
+    <button class="active" onclick="go('tour',this)"><i>🗓️</i>Route</button>
+    <button onclick="go('map',this)"><i>🗺️</i>Kaart</button>
+    <button onclick="go('surprise',this)"><i>🎴</i>Momenten</button>
+    <button onclick="go('photos',this)"><i>📸</i>Foto's</button>
+    <button onclick="go('summary',this)"><i>✨</i>Overzicht</button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   DATA — 8 stops met echte coördinaten
+   ============================================================ */
+var STOPS = [
+  { icon:"☕", name:"Grand Place", lat:50.63706, lon:3.06340,
+    time:"09:30 · start", walk:"Startpunt", emoji:"🏛️",
+    desc:"Officieel heet dit plein Place du Général de Gaulle, maar in Lille zegt iedereen gewoon Grand Place. In het midden staat de Colonne de la Déesse, ingehuldigd in 1845 ter herinnering aan het beleg van de stad door het Oostenrijkse leger in 1792. Het bronzen beeld bovenop, van beeldhouwer Théophile Bra, houdt in de rechterhand een lont vast om kanonnen mee aan te steken en wijst met links naar een tekst in de sokkel: het antwoord van burgemeester François Andé Deroy, die weigerde de stad over te geven. Opvallend voor een Noord-Frans plein van dit formaat is dat er geen kerk of belfort staat — de Sint-Etiennekerk die hier stond werd tijdens datzelfde beleg verwoest en nooit herbouwd. Rondom zie je een mengeling van Vlaamse trapgevels en 18e-eeuwse panden, met als blikvanger het gebouw van dagblad La Voix du Nord: drie vergulde vrouwenfiguren op het dak die Vlaanderen, Artesië en Henegouwen voorstellen. Aan de noordkant staat de Grand Garde uit 1717, ooit het wachthuis van het koninklijke garnizoen en tegenwoordig een theater. Het plein is al sinds de middeleeuwen de handelskern van de stad en loopt aan de zuidkant over in de Rue de Béthune, een van de drukste winkelstraten van Frankrijk buiten Parijs.",
+    facts:["🏛️ Zuil uit 1845, ruim 15 meter hoog, sinds de jaren negentig omringd door een fontein",
+           "⚔️ Het beleg van 1792 duurde negen dagen — de stad gaf zich niet over",
+           "⛪ Geen kerk op het plein: die werd in datzelfde beleg kapotgeschoten",
+           "🎭 De Grand Garde uit 1717 is nu het Théâtre du Nord"],
+    activity:"Zoek een terras aan de zonkant, bestel iets kleins en vertel elkaar waar je vandaag het meest naar uitkijkt." },
+
+  { icon:"📚", name:"Vieille Bourse", lat:50.63756, lon:3.06400,
+    time:"10:15", walk:"2 min lopen", emoji:"📖",
+    desc:"Gebouwd tussen 1652 en 1653, toen Lille nog onder Spaans bestuur viel. De kooplieden van de stad vroegen Filips IV toestemming voor een eigen handelsbeurs, om niet onder te doen voor Antwerpen en Amsterdam. Het ontwerp kwam van Julien Destrée, van origine meubelmaker, en dat is te zien: geen één groot beursgebouw, maar 24 identieke koopmanshuizen, zes per zijde, onder één dak rond een verborgen binnenhof met vier monumentale doorgangen. De gevels zitten vol houtsnijwerk in steen — kariatiden, guirlandes, hoorns des overvloeds en de Vlaamse leeuw boven de portalen, een herinnering aan de tijd vóór Lodewijk XIV. De gekleurde wapenschilden boven de tweede verdieping zijn juist modern: het zijn de logo's van regionale bedrijven die de restauratie in de jaren negentig hebben betaald. In de binnenhof staan nu vaste kraampjes met tweedehands boeken, strips en oude prenten, en aan de zijkant wordt vrijwel dagelijks geschaakt. Op zomerse zondagavonden wordt er onder de galerij tango gedanst, meestal vanaf een uur of zes.",
+    facts:["📖 24 identieke huizen, betaald door de kooplieden zelf",
+           "🏰 Beschermd monument sinds 1921",
+           "🧱 Ontsnapte in 1914 net aan de bombardementen die de Rue Faidherbe vernielden",
+           "💃 Boekenmarkt ’s middags, tango op zomerse zondagavonden"],
+    activity:"Zoek allebei stiekem een boek uit voor de ander en schrijf één zin voorin voordat je het geeft." },
+
+  { icon:"🥐", name:"Rue de la Monnaie", lat:50.64030, lon:3.06170,
+    time:"11:00", walk:"8 min lopen", emoji:"🏘️",
+    desc:"De Rue de la Monnaie dankt zijn naam aan de koninklijke munt die hier tot in de 17e eeuw gevestigd was. Het is de oudste straat van Vieux-Lille en meteen de mooiste: smalle baksteengevels uit de 17e en 18e eeuw met zandstenen banden, veel ervan gerestaureerd in de jaren zeventig toen de oude stad op de nominatie stond voor sloop. Tegenwoordig zitten er interieurwinkels, kleine boetieks en chocolatiers, en is de straat grotendeels autoluw — rustig genoeg om echt omhoog te kijken. Halverwege ligt de Hospice Comtesse, een gasthuis dat in 1237 werd gesticht door Jeanne van Vlaanderen en nu een stadsmuseum is met een spectaculair houten tongewelf in de ziekenzaal. Een paar passen verderop, op nummer 27 van de Rue Esquermoise, zit Méert: op dat adres zit sinds de 17e eeuw een winkel, de patisserie zelf gaat terug tot 1761 en is daarmee een van de oudste nog werkende banketbakkerijen ter wereld. Het interieur met lakwerk, spiegels en visgraatparket komt van een verbouwing in 1839 door architect Charles Benvignat en is sinds 1980 beschermd monument. De beroemde wafel met Madagaskar-vanillecrème werd in 1849 bedacht door de Belg Michael Méert, die daarvoor jaren op vanilleplantages had gewerkt.",
+    facts:["🧇 Wafel met vanillecrème, recept uit 1849, nog altijd het huisproduct",
+           "🖼️ Winkelpui en interieur van Méert: beschermd monument sinds 1980",
+           "🏥 Hospice Comtesse uit 1237, tegenwoordig museum",
+           "👑 Hofleverancier van koning Leopold I van België"],
+    activity:"Haal één wafel bij Méert en deel 'm staand op straat — geen foto, gewoon zolang hij warm is." },
+
+  { icon:"⛪", name:"Notre-Dame-de-la-Treille", lat:50.64000, lon:3.05980,
+    time:"11:45", walk:"5 min lopen", emoji:"✝️",
+    desc:"De bouw begon in 1854 en werd pas met kerst 1999 afgerond — honderdvijfenveertig jaar later. Het neogotische ontwerp van Charles Leroy was zo ambitieus dat het geld halverwege opraakte; decennialang zat er een noodgevel van baksteen op, die in 1947 nog eens provisorisch werd dichtgezet. De huidige westgevel is van de Lillese architect Pierre-Louis Carlier, met technisch werk van de Ierse ingenieur Peter Rice, dezelfde die meewerkte aan het Centre Pompidou en de omgekeerde piramide van het Louvre. De grote spitsboog is gevuld met een schil van roze Portugees marmer van slechts drie centimeter dik, die desondanks zo’n vijftien ton weegt en volledig aan de boog hangt. Van buiten oogt dat gesloten en grijs, maar van binnen laat het marmer het daglicht door en kleurt het hele middenschip warm oranje — het sterkst laat in de middag, als de zon uit het westen komt. Het metalen frame aan de buitenkant heeft de vorm van een vis, het vroegste christelijke symbool. De kathedraal staat op de plek van de oude burchtheuvel van Lille en dankt haar naam aan een middeleeuws Mariabeeld dat achter een traliehek — une treille — werd bewaard.",
+    facts:["🕒 Bouwtijd 1854–1999; de gevel werd op 18 december 1999 ingewijd",
+           "🪨 Marmeren sluier van 3 cm dik en circa 15 ton",
+           "🐟 Het buitenframe heeft de vorm van een vis",
+           "💡 Beste lichtmoment: laat in de middag, van binnenuit gezien"],
+    activity:"Ga even zitten op een bank achterin, blijf een minuut stil, en vertel daarna waar je aan dacht." },
+
+  { icon:"🍷", name:"Lunch in een estaminet", lat:50.64170, lon:3.06530,
+    time:"12:30", walk:"6 min lopen", emoji:"🍽️",
+    desc:"Een estaminet is de noord-Franse variant van een bruine kroeg: donker hout, geruite kleedjes, oude emaillen reclameborden en volksspelletjes aan de muur of op tafel. Het woord komt waarschijnlijk uit het Waals en stond oorspronkelijk voor een café waar arbeiders hun eigen meegebrachte eten mochten opwarmen. Vieux-Lille zit er vol mee, vooral rond de Rue de Gand en de Rue Basse. Op de kaart staat Vlaamse streekkeuken: carbonade flamande is rundvlees dat urenlang stooft in bruin bier met peperkoek en mosterd, wat het die zoetzure toon geeft. Potjevleesch is een koude terrine van vier soorten wit vlees in gelei, traditioneel met frieten erbij — een combinatie die logischer smaakt dan hij klinkt. Wie honger heeft neemt een welsh: een blok cheddar gesmolten in bier over brood met ham, stevig genoeg om de rest van de middag op te teren. Erbij drink je een bier uit de regio of uit België, dat op nog geen vijftien kilometer begint.",
+    facts:["🍺 Vraag naar een bier van de tap — de kaart is vaak Frans-Vlaams",
+           "🍟 Frieten horen erbij; die traditie deelt Lille met België",
+           "🎯 Veel estaminets hebben nog oude cafespelletjes zoals bourle of tafelvoetbal",
+           "🕐 De keuken sluit vaak rond 14:00 en opent pas tegen 19:00 weer"],
+    activity:"Bestel allebei iets wat je nog nooit gegeten hebt, proef van elkaars bord en laat de verliezer van steen-papier-schaar het toetje kiezen." },
+
+  { icon:"🎨", name:"Palais des Beaux-Arts", lat:50.62980, lon:3.06320,
+    time:"14:15", walk:"15 min lopen", emoji:"🖼️",
+    desc:"Het museum ontstond in 1792, toen tijdens de Revolutie kunst in beslag werd genomen bij kerken en geëmigreerde adel — vandaar dat de collectie meteen al Rubens, Van Dyck en Jordaens bevatte. Toen de verzameling het stadhuis ontgroeide liet burgemeester Géry Legrand een apart paleis bouwen aan de Place de la République, dat in 1892 opende. Met tienduizenden werken geldt het als een van de grootste schone-kunstenmusea van Frankrijk buiten Parijs, met Vlaamse en Hollandse meesters op de eerste verdieping en 19e-eeuwers als Delacroix, Courbet en Monet daarnaast. De echte verrassing zit echter in het souterrain: de plans-reliefs, veertien enorme maquettes van vestingsteden in Noord-Frankrijk, België en Nederland, waaronder Lille, Calais, Ieper, Namen en Maastricht. Ze zijn gebouwd op schaal 1:600, grotendeels in de 18e eeuw, en waren strikt geheim militair werkmateriaal voor het plannen van belegeringen. De huizen zijn stuk voor stuk uit lindenhout gesneden en de begroeiing is gemaakt van getwijnde zijde, wat het detailniveau bijna onwerkelijk maakt. Ze lagen eeuwenlang in Parijs en kwamen pas in 1987 naar Lille; zoek op de maquette van Lille de Citadelle op, waar je straks zelf loopt.",
+    facts:["🖼️ Rubens, Van Dyck, Goya, Delacroix, Courbet en Monet",
+           "🗺️ 14 plans-reliefs op schaal 1:600 in het souterrain",
+           "📅 Gesloten op dinsdag; maandag pas open vanaf 14:00",
+           "🎫 Reken op minstens anderhalf uur, ook als je alleen de hoogtepunten doet"],
+    activity:"Splits tien minuten op en zoek allebei het schilderij dat je aan de ander doet denken. Breng elkaar er daarna naartoe." },
+
+  { icon:"🌳", name:"Parc de la Citadelle", lat:50.64270, lon:3.04590,
+    time:"16:00", walk:"20 min lopen", emoji:"🌲",
+    desc:"Lodewijk XIV veroverde Lille in augustus 1667 op de Spanjaarden en gaf nog datzelfde jaar opdracht tot een vesting om zijn nieuwe noordgrens te bewaken. Van de voorgelegde ontwerpen koos hij dat van Vauban: een regelmatige vijfhoek met vijf bastions, zo geconstrueerd dat geen enkele muur benaderd kan worden zonder onder vuur te liggen van een naastgelegen muur. De eerste steen ging in 1668 de grond in, onder leiding van de Lillese meester-metselaar Simon Vollant, en er verdwenen tientallen miljoenen bakstenen in het werk. Vauban was er zelf zo tevreden over dat hij het la reine des citadelles noemde, de koningin van de citadellen — het werd het model voor alles wat hij daarna bouwde. De moerassige ondergrond was geen probleem maar onderdeel van het plan: via sluizen kon de hele omgeving onder water worden gezet. Het fort is nog altijd militair terrein en huisvest een NAVO-staf, dus naar binnen kom je alleen met een rondleiding. Het park eromheen is vrij toegankelijk en met ruim honderd hectare het grootste van de stad: brede lanen, grachten, een dierenpark en schapen die de grastaluds kort houden in plaats van maaimachines.",
+    facts:["👑 Door Vauban zelf la reine des citadelles genoemd",
+           "⭐ Vijfhoekig met vijf bastions — het prototype voor zijn latere vestingen",
+           "🏗️ Gebouwd vanaf 1668 onder leiding van Simon Vollant",
+           "🐑 Op de taluds graast een kudde schapen",
+           "🏰 Binnenterrein alleen te bezoeken met gids — het is nog militair gebied"],
+    activity:"Loop één ronde over de wallen zonder telefoon. Twintig minuten, alleen jullie en wat er ter sprake komt." },
+
+  { icon:"🌇", name:"Place Louise de Bettignies", lat:50.64120, lon:3.06480,
+    time:"18:30", walk:"18 min lopen", emoji:"🥂",
+    desc:"Dit pleintje aan de rand van Vieux-Lille is vernoemd naar Louise de Bettignies, een Lillese vrouw die tijdens de Eerste Wereldoorlog onder de schuilnaam Alice Dubois een spionagenetwerk leidde achter de Duitse linies. Ze werd in 1915 opgepakt en stierf in 1918 in Duitse gevangenschap; haar netwerk leverde inlichtingen door aan de Britten en wordt gerekend tot de effectiefste van de oorlog. Rondom het plein staan hoge Vlaamse gevels, waaronder de Maison de Gilles de la Boë uit 1636 met zijn zwaar versierde barokke voorkant — een van de best bewaarde 17e-eeuwse huizen van de stad. Om de hoek, in de Rue de Fleurus, staat de Maison Coilliot: een art-nouveaugevel van Héctor Guimard, dezelfde architect die de bekende metro-ingangen van Parijs ontwierp. Op dit uur van de dag is het plein op zijn mooist, met de zon laag en de rode baksteen die roze kleurt. De terrassen lopen dan vol en het plein vormt de natuurlijke overgang tussen de dag en de avond. Vanaf hier sta je in een paar minuten in de Rue de Gand, de restaurantstraat van de oude stad, mocht de dag toch nog wat langer duren.",
+    facts:["🕵️ Genoemd naar verzetsvrouw Louise de Bettignies (1880–1918)",
+           "🏛️ Maison de Gilles de la Boë uit 1636 staat aan het plein",
+           "🎨 Maison Coilliot van Guimard om de hoek in de Rue de Fleurus",
+           "📸 Beste licht: ongeveer een half uur voor zonsondergang"],
+    activity:"Proost op de dag en noem allebei je mooiste moment — schrijf het daarna op bij het dagoverzicht." }
+];
+
+var SURPRISES = [
+  "Vraag een voorbijganger om één foto van jullie samen — en ga ook echt even goed staan.",
+  "Wat is het eerste dat je aan mij opviel?",
+  "Koop iets kleins voor de ander, onder de vijf euro, zonder dat die het ziet.",
+  "Sla de eerstvolgende zijstraat in en loop hem helemaal uit.",
+  "Als we in Lille zouden wonen: in welke straat? Ga er staan.",
+  "Bestel de volgende ronde volledig in het Frans.",
+  "Laat de ander een nummer horen dat je aan hem of haar doet denken. Eén oortje elk.",
+  "Wat wil je dit jaar nog samen doen?",
+  "Kies allebei een raam of gevel uit die je mooi vindt en leg uit waarom.",
+  "Geef de ander een kus onder de eerstvolgende poort of boog.",
+  "Welk klein ding doe ik waar je blij van wordt?",
+  "Beschrijf deze dag in precies drie woorden — tegelijk uitspreken.",
+  "Raad wat de ander straks bestelt. Wie het mis heeft, betaalt.",
+  "Loop de komende vijf minuten hand in hand, zonder iets te zeggen."
+];
+
+var PHOTOS = [
+  {i:"🏛️",l:"Grand Place"},       {i:"📚",l:"Vondst boekenmarkt"},
+  {i:"🥐",l:"De wafel van Méert"}, {i:"⛪",l:"Licht in de kathedraal"},
+  {i:"🍷",l:"Lunchtafel"},         {i:"🖼️",l:"Favoriete schilderij"},
+  {i:"🌳",l:"Wallen Citadelle"},   {i:"🌇",l:"Avondlicht"},
+  {i:"📷",l:"De onscherpe foto"}
+];
+
+/* ============================================================
+   GEOGRAFIE — eigen kaartlaag, zodat de kaart ALTIJD iets toont,
+   ook zonder internet. Coördinaten bij benadering.
+   ============================================================ */
+var WATER = [
+  /* Deûle / kanaal langs de Citadelle, van noord naar zuidwest */
+  [[3.0505,50.6520],[3.0470,50.6470],[3.0432,50.6432],[3.0405,50.6390],
+   [3.0400,50.6340],[3.0420,50.6290],[3.0400,50.6240]],
+  /* aftakking richting het oosten, langs de haven */
+  [[3.0432,50.6432],[3.0520,50.6455],[3.0610,50.6470],[3.0700,50.6478]]
+];
+
+var PARKS = [
+  { name:"Parc de la Citadelle",
+    ring:[[3.0390,50.6470],[3.0455,50.6492],[3.0530,50.6470],[3.0545,50.6425],
+          [3.0505,50.6385],[3.0440,50.6378],[3.0392,50.6410]] },
+  { name:"Jardin Vauban",
+    ring:[[3.0455,50.6360],[3.0520,50.6368],[3.0535,50.6340],[3.0470,50.6330]] },
+  { name:"Parc J.-B. Lebas",
+    ring:[[3.0660,50.6255],[3.0740,50.6262],[3.0745,50.6238],[3.0665,50.6232]] }
+];
+
+var ROADS = [
+  /* Rue Nationale: Grand Place richting west */
+  [[3.0630,50.6372],[3.0570,50.6362],[3.0500,50.6352],[3.0448,50.6346]],
+  /* Rue Faidherbe: Grand Place naar station Lille-Flandres */
+  [[3.0636,50.6370],[3.0670,50.6366],[3.0700,50.6362]],
+  /* Noord-zuid as: Vieux-Lille -> Grand Place -> Rép. -> PBA */
+  [[3.0625,50.6435],[3.0630,50.6400],[3.0634,50.6371],[3.0632,50.6330],[3.0632,50.6298]],
+  /* Boulevard de la Liberté richting Citadelle */
+  [[3.0632,50.6298],[3.0560,50.6330],[3.0490,50.6362],[3.0445,50.6392]],
+  /* Ring rond het centrum (grofweg) */
+  [[3.0700,50.6362],[3.0740,50.6300],[3.0700,50.6250],[3.0600,50.6235],
+   [3.0500,50.6265],[3.0450,50.6330],[3.0440,50.6400]]
+];
+
+var PLACES = [  /* oriëntatiepunten zonder speld */
+  {n:"Vieux-Lille", lon:3.0600, lat:50.6448, z:15},
+  {n:"Gare Lille-Flandres", lon:3.0703, lat:50.6363, z:15},
+  {n:"Gare Lille-Europe", lon:3.0757, lat:50.6390, z:16},
+  {n:"Place de la République", lon:3.0632, lat:50.6312, z:16},
+  {n:"Wazemmes", lon:3.0530, lat:50.6255, z:16}
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var done = new Array(STOPS.length).fill(false);
+var photosTaken = new Array(PHOTOS.length).fill(false);
+var surpriseCount = 0, lastSurprise = -1, rating = 0;
+
+/* ============================================================
+   NAVIGATIE
+   ============================================================ */
+var TITLES = {tour:"Route", map:"Kaart", surprise:"Momenten", photos:"Foto's", summary:"Dagoverzicht"};
+
+function startTour(){
+  var w = document.getElementById("welcome");
+  w.classList.add("hidden");
+  setTimeout(function(){ w.style.display = "none"; }, 650);
+}
+
+function go(view, btn){
+  var views = document.querySelectorAll(".view");
+  for(var i=0;i<views.length;i++) views[i].classList.remove("active");
+  document.getElementById("view-"+view).classList.add("active");
+  var btns = document.querySelectorAll("nav button");
+  for(var j=0;j<btns.length;j++) btns[j].classList.remove("active");
+  if(btn) btn.classList.add("active");
+  document.getElementById("viewTitle").textContent = TITLES[view];
+  window.scrollTo({top:0, behavior:"smooth"});
+  if(view === "summary") updateSummary();
+  // De kaart kan pas meten als hij zichtbaar is:
+  if(view === "map") setTimeout(function(){
+    if(!MAP.fitted){ fitRoute(); MAP.fitted = true; } else { renderMap(); }
+  }, 60);
+}
+
+/* ============================================================
+   ROUTE
+   ============================================================ */
+function buildStops(){
+  var html = "";
+  for(var i=0;i<STOPS.length;i++){
+    var s = STOPS[i];
+    html +=
+      '<article class="card stop" id="stop-'+i+'">'+
+        '<div class="stop-head" onclick="toggleStop('+i+')">'+
+          '<div class="stop-num">'+s.icon+'</div>'+
+          '<div style="flex:1">'+
+            '<h3 class="stop-title">'+(i+1)+'. '+s.name+'</h3>'+
+            '<div class="muted" style="font-size:13px">'+s.time+'</div>'+
+            '<div class="stop-meta">'+
+              '<span class="tag time">🚶 '+s.walk+'</span>'+
+              '<span class="tag" id="status-'+i+'">Nog te doen</span>'+
+            '</div>'+
+          '</div>'+
+          '<div class="chevron">▼</div>'+
+        '</div>'+
+        '<div class="stop-body"><div class="stop-body-inner">'+
+          '<p>'+s.desc+'</p>'+
+          '<ul class="facts">'+ s.facts.map(function(f){ return '<li>'+f+'</li>'; }).join('') +'</ul>'+
+          '<div class="tip"><b>Samen doen —</b> '+s.activity+'</div>'+
+          '<div class="btn-row">'+
+            '<button class="btn-done" id="btn-'+i+'" onclick="toggleDone('+i+',event)">Markeer als bezocht</button>'+
+            '<button class="btn-map" onclick="showOnMap('+i+',event)" title="Toon op kaart">🗺️</button>'+
+          '</div>'+
+        '</div></div>'+
+      '</article>';
+  }
+  document.getElementById("stopsList").innerHTML = html;
+}
+
+function toggleStop(i){
+  var el = document.getElementById("stop-"+i);
+  var wasOpen = el.classList.contains("open");
+  var all = document.querySelectorAll(".stop");
+  for(var k=0;k<all.length;k++) all[k].classList.remove("open");
+  if(!wasOpen) el.classList.add("open");
+}
+
+function toggleDone(i, e){
+  e.stopPropagation();
+  done[i] = !done[i];
+  document.getElementById("stop-"+i).classList.toggle("done", done[i]);
+  document.getElementById("btn-"+i).textContent = done[i] ? "Bezocht ✓" : "Markeer als bezocht";
+  document.getElementById("status-"+i).textContent = done[i] ? "✓ Bezocht" : "Nog te doen";
+  updateProgress();
+  renderMap();
+  toast(done[i] ? STOPS[i].name + " afgevinkt" : "Weer ongedaan gemaakt");
+}
+
+/* Vanuit de routelijst naar de kaart springen */
+function showOnMap(i, e){
+  e.stopPropagation();
+  var navBtn = document.querySelectorAll("nav button")[1];
+  go("map", navBtn);
+  setTimeout(function(){
+    MAP.z = 17;
+    MAP.cx = lonToX(STOPS[i].lon, MAP.z);
+    MAP.cy = latToY(STOPS[i].lat, MAP.z);
+    MAP.fitted = true;
+    clearTiles();
+    selectPin(i);
+  }, 120);
+}
+
+/* ============================================================
+   VOORTGANG
+   ============================================================ */
+var NOTES = [
+  "Nog niet begonnen — start met koffie op de Grand Place.",
+  "Eerste stop gehad. De dag is officieel begonnen.",
+  "Twee stops gedaan, het ritme zit erin.",
+  "Drie stops. Goed moment voor iets zoets samen.",
+  "Vier stops — een lange lunch verdiend.",
+  "Vijf stops. Het middaglicht is het mooiste licht.",
+  "Zes stops. Benen moe, dag geslaagd.",
+  "Zeven stops. Bewaar wat energie voor het terras.",
+  "Alle acht stops gelopen. Wat een dag samen."
+];
+
+function buildDots(){
+  var h = "";
+  for(var i=0;i<STOPS.length;i++) h += '<div class="dot" id="dot-'+i+'"></div>';
+  document.getElementById("dots").innerHTML = h;
+}
+
+function updateProgress(){
+  var n = done.filter(Boolean).length;
+  var pct = Math.round(n / STOPS.length * 100);
+  document.getElementById("barFill").style.width = pct + "%";
+  document.getElementById("progressCount").textContent = pct + "%";
+  document.getElementById("headerChip").textContent = n + " / " + STOPS.length + " stops";
+  document.getElementById("progressNote").textContent = NOTES[n];
+  for(var i=0;i<STOPS.length;i++) document.getElementById("dot-"+i).classList.toggle("done", done[i]);
+}
+
+/* ============================================================
+   KAART — eigen slippy map, web-mercatorprojectie.
+   Basislaag = zelfgetekende SVG (werkt altijd).
+   Optioneel: OpenStreetMap-tegels erbovenop (knop 🛰️).
+   ============================================================ */
+var TILE = 256;
+var MAP = { z:15, cx:0, cy:0, minZ:13, maxZ:18, active:-1, tiles:false, fitted:false, ready:false };
+
+function lonToX(lon, z){ return (lon + 180) / 360 * TILE * Math.pow(2, z); }
+function latToY(lat, z){
+  var r = lat * Math.PI / 180;
+  return (1 - Math.log(Math.tan(r) + 1/Math.cos(r)) / Math.PI) / 2 * TILE * Math.pow(2, z);
+}
+
+function clearTiles(){ document.getElementById("tileLayer").innerHTML = ""; }
+
+/* SVG-hulpje: bouwt een pad uit een lijst [lon,lat] */
+function pathFrom(coords, ox, oy, close){
+  var d = "";
+  for(var i=0;i<coords.length;i++){
+    var x = (lonToX(coords[i][0], MAP.z) - ox).toFixed(1);
+    var y = (latToY(coords[i][1], MAP.z) - oy).toFixed(1);
+    d += (i === 0 ? "M" : "L") + x + "," + y + " ";
+  }
+  return d + (close ? "Z" : "");
+}
+
+function renderMap(){
+  var board = document.getElementById("mapBoard");
+  if(!board) return;
+  var W = board.clientWidth, H = board.clientHeight;
+  if(W === 0 || H === 0) return;                 // weergave nog niet zichtbaar
+  var ox = MAP.cx - W/2, oy = MAP.cy - H/2;
+
+  /* ---------- eigen basislaag (SVG) ---------- */
+  var svg = '';
+  /* parken */
+  for(var p=0;p<PARKS.length;p++){
+    svg += '<path d="'+pathFrom(PARKS[p].ring, ox, oy, true)+'" fill="#cfe3c4" stroke="#b6d3a8" stroke-width="1"/>';
+  }
+  /* water */
+  for(var w=0;w<WATER.length;w++){
+    svg += '<path d="'+pathFrom(WATER[w], ox, oy, false)+'" fill="none" stroke="#a9cddd" stroke-width="'+(MAP.z>=16?14:9)+'" stroke-linecap="round" stroke-linejoin="round"/>';
+  }
+  /* wegen: eerst dikke witte rand, dan lijn */
+  for(var r=0;r<ROADS.length;r++){
+    var d = pathFrom(ROADS[r], ox, oy, false);
+    svg += '<path d="'+d+'" fill="none" stroke="#ffffff" stroke-width="'+(MAP.z>=16?9:6)+'" stroke-linecap="round"/>';
+    svg += '<path d="'+d+'" fill="none" stroke="#e3d6cd" stroke-width="'+(MAP.z>=16?5:3)+'" stroke-linecap="round"/>';
+  }
+  /* onze route */
+  var route = [];
+  for(var s=0;s<STOPS.length;s++) route.push([STOPS[s].lon, STOPS[s].lat]);
+  svg += '<path d="'+pathFrom(route, ox, oy, false)+'" fill="none" stroke="#8e2743" stroke-width="3.5" '+
+         'stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" opacity=".9"/>';
+  /* oriëntatielabels */
+  for(var q=0;q<PLACES.length;q++){
+    if(MAP.z < PLACES[q].z) continue;
+    var lx = (lonToX(PLACES[q].lon, MAP.z) - ox).toFixed(0);
+    var ly = (latToY(PLACES[q].lat, MAP.z) - oy).toFixed(0);
+    svg += '<text x="'+lx+'" y="'+ly+'" text-anchor="middle" font-size="10.5" font-family="Segoe UI,sans-serif" '+
+           'fill="#8a7a80" stroke="#fff" stroke-width="2.5" paint-order="stroke">'+PLACES[q].n+'</text>';
+  }
+  document.getElementById("mapSvg").innerHTML = svg;
+
+  /* ---------- optionele OSM-tegels ---------- */
+  var layer = document.getElementById("tileLayer");
+  if(MAP.tiles){
+    var n = Math.pow(2, MAP.z);
+    var x0 = Math.floor(ox/TILE), x1 = Math.floor((ox+W)/TILE);
+    var y0 = Math.floor(oy/TILE), y1 = Math.floor((oy+H)/TILE);
+    var keep = {};
+    for(var tx=x0; tx<=x1; tx++){
+      for(var ty=y0; ty<=y1; ty++){
+        if(ty < 0 || ty >= n) continue;
+        var xx = ((tx % n) + n) % n;
+        var key = MAP.z+"/"+xx+"/"+ty;
+        keep[key] = 1;
+        var img = layer.querySelector('img[data-k="'+key+'"]');
+        if(!img){
+          img = document.createElement("img");
+          img.dataset.k = key;
+          img.alt = "";
+          img.referrerPolicy = "no-referrer-when-downgrade";
+          img.onerror = function(){ this.style.display = "none"; };
+          img.src = "https://tile.openstreetmap.org/"+MAP.z+"/"+xx+"/"+ty+".png";
+          layer.appendChild(img);
+        }
+        img.style.left = (tx*TILE - ox) + "px";
+        img.style.top  = (ty*TILE - oy) + "px";
+      }
+    }
+    var imgs = layer.querySelectorAll("img");
+    for(var m=imgs.length-1; m>=0; m--){ if(!keep[imgs[m].dataset.k]) imgs[m].remove(); }
+  }
+
+  /* ---------- spelden ---------- */
+  var ph = "";
+  for(var i2=0;i2<STOPS.length;i2++){
+    var st = STOPS[i2];
+    var px = (lonToX(st.lon, MAP.z) - ox).toFixed(1);
+    var py = (latToY(st.lat, MAP.z) - oy).toFixed(1);
+    if(px < -60 || px > W+60 || py < -60 || py > H+60) continue;   // buiten beeld
+    var cls = "pin" + (done[i2] ? " done" : "") + (MAP.active === i2 ? " active" : "");
+    var label = MAP.z >= 14 ? '<small>'+st.emoji+' '+st.name.split(" ")[0]+'</small>' : '';
+    ph += '<div class="'+cls+'" style="left:'+px+'px;top:'+py+'px" onclick="selectPin('+i2+')">'+
+            '<span class="bub"><i>'+(done[i2] ? "✓" : (i2+1))+'</i></span>'+label+'</div>';
+  }
+  document.getElementById("pinLayer").innerHTML = ph;
+
+  /* ---------- bediening bijwerken ---------- */
+  document.getElementById("mapBadge").textContent = "z" + MAP.z;
+  document.getElementById("btnIn").disabled  = (MAP.z >= MAP.maxZ);
+  document.getElementById("btnOut").disabled = (MAP.z <= MAP.minZ);
+  document.getElementById("mapAttr").innerHTML = MAP.tiles
+    ? '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+    : 'eigen kaartlaag';
+}
+
+function selectPin(i){
+  MAP.active = i;
+  var s = STOPS[i];
+  document.getElementById("mapInfo").innerHTML =
+    '<div class="ico">'+s.icon+'</div>'+
+    '<div>'+
+      '<h4>'+(i+1)+'. '+s.name+'</h4>'+
+      '<p>'+s.time+' · '+s.walk+' · '+(done[i] ? "✓ bezocht" : "nog te doen")+'</p>'+
+      '<a href="https://www.openstreetmap.org/?mlat='+s.lat+'&mlon='+s.lon+'#map=17/'+s.lat+'/'+s.lon+'" '+
+        'target="_blank" rel="noopener">Openen in kaart-app ↗</a>'+
+    '</div>';
+  renderMap();
+}
+
+function resetInfo(){
+  document.getElementById("mapInfo").innerHTML =
+    '<div class="ico">🗺️</div><div><h4>Tik op een speld</h4>'+
+    '<p>Sleep om te verschuiven, + en − om te zoomen. Met ⤢ zie je de hele route, met 🛰️ schakel je het satelliet-/stratenbeeld aan.</p></div>';
+}
+
+function zoomBy(d){
+  var nz = Math.min(MAP.maxZ, Math.max(MAP.minZ, MAP.z + d));
+  if(nz === MAP.z) return;
+  var f = Math.pow(2, nz - MAP.z);
+  MAP.cx *= f; MAP.cy *= f; MAP.z = nz;
+  clearTiles();
+  renderMap();
+}
+
+function fitRoute(){
+  var board = document.getElementById("mapBoard");
+  var W = board.clientWidth || 480, H = board.clientHeight || 360;
+  var lats = STOPS.map(function(s){ return s.lat; });
+  var lons = STOPS.map(function(s){ return s.lon; });
+  var midLon = (Math.min.apply(null,lons) + Math.max.apply(null,lons)) / 2;
+  var midLat = (Math.min.apply(null,lats) + Math.max.apply(null,lats)) / 2;
+  var best = MAP.minZ;
+  for(var z = MAP.maxZ; z >= MAP.minZ; z--){
+    var xs = lons.map(function(l){ return lonToX(l, z); });
+    var ys = lats.map(function(l){ return latToY(l, z); });
+    var dx = Math.max.apply(null,xs) - Math.min.apply(null,xs);
+    var dy = Math.max.apply(null,ys) - Math.min.apply(null,ys);
+    if(dx < W - 80 && dy < H - 80){ best = z; break; }
+  }
+  MAP.z = best;
+  MAP.cx = lonToX(midLon, best);
+  MAP.cy = latToY(midLat, best);
+  clearTiles();
+  renderMap();
+}
+
+function toggleTiles(){
+  MAP.tiles = !MAP.tiles;
+  document.getElementById("btnTiles").style.background = MAP.tiles ? "#8e2743" : "rgba(255,255,255,.96)";
+  document.getElementById("btnTiles").style.color = MAP.tiles ? "#fff" : "#8e2743";
+  clearTiles();
+  renderMap();
+  toast(MAP.tiles ? "Stratenkaart aan (internet nodig)" : "Eigen kaartlaag");
+}
+
+/* Slepen, wiel en dubbelklik */
+function initMapInteraction(){
+  var board = document.getElementById("mapBoard");
+  var dragging = false, lastX = 0, lastY = 0;
+
+  function down(x,y){ dragging = true; lastX = x; lastY = y; board.classList.add("dragging"); }
+  function move(x,y){
+    if(!dragging) return;
+    MAP.cx -= (x - lastX); MAP.cy -= (y - lastY);
+    lastX = x; lastY = y;
+    renderMap();
+  }
+  function up(){ dragging = false; board.classList.remove("dragging"); }
+
+  board.addEventListener("mousedown", function(e){ e.preventDefault(); down(e.clientX, e.clientY); });
+  window.addEventListener("mousemove", function(e){ move(e.clientX, e.clientY); });
+  window.addEventListener("mouseup", up);
+
+  board.addEventListener("touchstart", function(e){ var t = e.touches[0]; down(t.clientX, t.clientY); }, {passive:true});
+  board.addEventListener("touchmove", function(e){ var t = e.touches[0]; move(t.clientX, t.clientY); e.preventDefault(); }, {passive:false});
+  board.addEventListener("touchend", up);
+
+  board.addEventListener("dblclick", function(){ zoomBy(1); });
+  board.addEventListener("wheel", function(e){ e.preventDefault(); zoomBy(e.deltaY < 0 ? 1 : -1); }, {passive:false});
+
+  window.addEventListener("resize", function(){ renderMap(); });
+  MAP.ready = true;
+}
+
+/* ============================================================
+   LIVE WEER — Open-Meteo (gratis, geen sleutel).
+   Valt terug op voorbeelddata als er geen verbinding is.
+   ============================================================ */
+var WMO = {
+  0:["☀️","Onbewolkt"], 1:["🌤️","Overwegend zonnig"], 2:["⛅","Half bewolkt"], 3:["☁️","Bewolkt"],
+  45:["🌫️","Mist"], 48:["🌫️","Aanvriezende mist"],
+  51:["🌦️","Lichte motregen"], 53:["🌦️","Motregen"], 55:["🌦️","Dichte motregen"],
+  56:["🌧️","IJzel"], 57:["🌧️","IJzel"],
+  61:["🌧️","Lichte regen"], 63:["🌧️","Regen"], 65:["🌧️","Zware regen"],
+  66:["🌧️","Onderkoelde regen"], 67:["🌧️","Onderkoelde regen"],
+  71:["🌨️","Lichte sneeuw"], 73:["🌨️","Sneeuw"], 75:["❄️","Zware sneeuw"], 77:["🌨️","Sneeuwkorrels"],
+  80:["🌦️","Buien"], 81:["🌦️","Stevige buien"], 82:["⛈️","Zware buien"],
+  85:["🌨️","Sneeuwbuien"], 86:["🌨️","Sneeuwbuien"],
+  95:["⛈️","Onweer"], 96:["⛈️","Onweer met hagel"], 99:["⛈️","Zwaar onweer"]
+};
+
+var WEATHER_FALLBACK = { code:2, temp:17, morning:13, noon:17, eve:15, rain:15 };
+
+function weatherAdvice(t, rain, code){
+  if(code >= 95)  return "⛈️ Onweer op komst. Plan het museum in het midden van de dag.";
+  if(rain >= 60)  return "☔ Grote kans op regen. Eén paraplu is genoeg — dan loop je dicht bij elkaar.";
+  if(rain >= 30)  return "🌂 Kans op een bui. Neem een kleine paraplu mee voor onderweg.";
+  if(t >= 24)     return "🧴 Warm vandaag. Neem water mee en zoek de schaduw in het Citadellepark.";
+  if(t <= 8)      return "🧣 Fris. Extra reden voor lange koffiepauzes binnen.";
+  return "🧥 Prima wandelweer. Neem één dun jack mee — dan kun je 'm 's avonds delen.";
+}
+
+function paintWeather(d, live, note){
+  var w = WMO[d.code] || ["⛅","Wisselend"];
+  document.getElementById("wIcon").textContent = w[0];
+  document.getElementById("wDesc").textContent = w[1];
+  document.getElementById("wTemp").textContent = Math.round(d.temp) + "°";
+  document.getElementById("wMorning").textContent = Math.round(d.morning) + "°";
+  document.getElementById("wNoon").textContent = Math.round(d.noon) + "°";
+  document.getElementById("wEve").textContent = Math.round(d.eve) + "°";
+  document.getElementById("wRain").textContent = Math.round(d.rain) + "%";
+  document.getElementById("wAdvice").textContent = weatherAdvice(d.temp, d.rain, d.code);
+  document.getElementById("wStatus").textContent = note || (live
+    ? "Live · Open-Meteo · " + new Date().toLocaleTimeString("nl-NL",{hour:"2-digit",minute:"2-digit"})
+    : "Geen verbinding — voorbeelddata");
+}
+
+function loadWeather(manual){
+  var btn = document.getElementById("wRefresh");
+  if(btn) btn.classList.add("spin");
+  if(manual) document.getElementById("wStatus").textContent = "Vernieuwen…";
+
+  var url = "https://api.open-meteo.com/v1/forecast" +
+            "?latitude=50.6292&longitude=3.0573" +
+            "&current=temperature_2m,weather_code" +
+            "&hourly=temperature_2m,precipitation_probability" +
+            "&timezone=Europe%2FParis&forecast_days=1";
+
+  var finished = false;
+  var timer = setTimeout(function(){
+    if(!finished){ finished = true; done_(); paintWeather(WEATHER_FALLBACK, false, "Time-out — voorbeelddata"); }
+  }, 9000);
+
+  function done_(){ clearTimeout(timer); if(btn) btn.classList.remove("spin"); }
+
+  fetch(url, {mode:"cors", cache:"no-store"})
+    .then(function(r){
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(function(j){
+      if(finished) return;
+      finished = true; done_();
+      var h = j.hourly || {};
+      function at(hh, arr){
+        if(!h.time || !arr) return null;
+        for(var i=0;i<h.time.length;i++){ if(h.time[i].indexOf("T"+hh) > -1) return arr[i]; }
+        return null;
+      }
+      var now = (j.current && j.current.temperature_2m != null) ? j.current.temperature_2m : 15;
+      var probs = (h.precipitation_probability || []).slice(8, 21).filter(function(v){ return v != null; });
+      paintWeather({
+        code:    (j.current && j.current.weather_code != null) ? j.current.weather_code : 2,
+        temp:    now,
+        morning: at("09:00", h.temperature_2m) != null ? at("09:00", h.temperature_2m) : now,
+        noon:    at("13:00", h.temperature_2m) != null ? at("13:00", h.temperature_2m) : now,
+        eve:     at("19:00", h.temperature_2m) != null ? at("19:00", h.temperature_2m) : now,
+        rain:    probs.length ? Math.max.apply(null, probs) : 0
+      }, true);
+    })
+    .catch(function(err){
+      if(finished) return;
+      finished = true; done_();
+      paintWeather(WEATHER_FALLBACK, false, "Offline — voorbeelddata (tik ⟳ om opnieuw te proberen)");
+    });
+}
+
+/* ============================================================
+   MOMENTEN
+   ============================================================ */
+function drawSurprise(){
+  var box = document.getElementById("surpriseBox");
+  var idx;
+  do { idx = Math.floor(Math.random() * SURPRISES.length); } while(idx === lastSurprise && SURPRISES.length > 1);
+  lastSurprise = idx;
+  box.classList.add("flip");
+  setTimeout(function(){ box.textContent = SURPRISES[idx]; box.classList.remove("flip"); }, 300);
+  surpriseCount++;
+  document.getElementById("surpriseCounter").textContent =
+    surpriseCount + (surpriseCount === 1 ? " kaartje getrokken" : " kaartjes getrokken");
+}
+
+/* ============================================================
+   FOTO'S
+   ============================================================ */
+function buildGallery(){
+  var h = "";
+  for(var i=0;i<PHOTOS.length;i++){
+    h += '<div class="frame" id="frame-'+i+'" onclick="togglePhoto('+i+')">'+
+           '<div class="icon">'+PHOTOS[i].i+'</div><div class="lbl">'+PHOTOS[i].l+'</div></div>';
+  }
+  document.getElementById("gallery").innerHTML = h;
+}
+
+function togglePhoto(i){
+  photosTaken[i] = !photosTaken[i];
+  var f = document.getElementById("frame-"+i);
+  f.classList.toggle("filled", photosTaken[i]);
+  f.querySelector(".icon").textContent = photosTaken[i] ? "✅" : PHOTOS[i].i;
+  toast(photosTaken[i] ? "Foto afgevinkt" : "Weer ongedaan gemaakt");
+}
+
+/* ============================================================
+   DAGOVERZICHT
+   ============================================================ */
+function buildHighlights(){
+  var h = "";
+  for(var i=0;i<STOPS.length;i++){
+    h += '<li><span>'+STOPS[i].icon+'</span><span id="hl-'+i+'"><b>'+STOPS[i].name+'</b> — '+STOPS[i].time+'</span></li>';
+  }
+  document.getElementById("highlightList").innerHTML = h;
+}
+
+function updateSummary(){
+  var n = done.filter(Boolean).length;
+  var ph = photosTaken.filter(Boolean).length;
+  document.getElementById("statStops").textContent = n;
+  document.getElementById("statKm").textContent = (n * 0.56).toFixed(1);
+  document.getElementById("statPhotos").textContent = ph;
+  document.getElementById("summaryLine").textContent =
+    n === 0 ? "De dag moet nog beginnen." :
+    n < STOPS.length ? n + " van de " + STOPS.length + " stops, " + ph + " foto's en " + surpriseCount + " kaartjes tot nu toe." :
+    "Alle " + STOPS.length + " stops gelopen, " + ph + " foto's en " + surpriseCount + " kaartjes. Een mooie dag samen.";
+  for(var i=0;i<STOPS.length;i++) document.getElementById("hl-"+i).style.opacity = done[i] ? 1 : .4;
+}
+
+function initRating(){
+  var hearts = document.querySelectorAll("#rating span");
+  for(var i=0;i<hearts.length;i++){
+    hearts[i].addEventListener("click", function(){
+      rating = parseInt(this.dataset.v, 10);
+      for(var j=0;j<hearts.length;j++){
+        hearts[j].classList.toggle("on", parseInt(hearts[j].dataset.v,10) <= rating);
+      }
+      var labels = ["","Kan beter","Prima","Leuk","Heel fijn","Om te onthouden"];
+      document.getElementById("ratingLabel").textContent = labels[rating];
+    });
+  }
+}
+
+function saveMoment(){
+  var v = document.getElementById("favMoment").value.trim();
+  toast(v ? "Opgeslagen" : "Schrijf eerst iets");
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+var toastTimer;
+function toast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+}
+
+/* ============================================================
+   START
+   ============================================================ */
+function init(){
+  document.getElementById("todayDate").textContent =
+    new Date().toLocaleDateString("nl-NL", {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+
+  buildStops();
+  buildDots();
+  buildGallery();
+  buildHighlights();
+  initRating();
+  updateProgress();
+  resetInfo();
+  initMapInteraction();
+  loadWeather();          // live weer ophalen
+  fitRoute();             // kaart alvast klaarzetten (wordt herhaald zodra zichtbaar)
+}
+
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", init);
+}else{
+  init();
+}
+</script>
+</body>
+</html>
